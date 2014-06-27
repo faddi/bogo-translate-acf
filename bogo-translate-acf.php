@@ -64,26 +64,13 @@ class Bogo_Acf {
             // check if the original post has a parent
             if( $original_post->post_parent != 0 ) {
 
-                // get posts that is a translation to the current locale of the original posts parent
-                $args = array(
-                    'meta_query'    => array(
-                        array(
-                            'key' => '_locale',
-                            'value' => $locale
-                        ),
-                        array(
-                            'key' => '_original_post',
-                            'value' => $original_post->post_parent
-                        )
-                    )
-                );
+                $parent_translations = bogo_get_post_translations( $original_post->post_parent );
 
-                $siblings_parents_sibling = query_posts( $args );
-
-                // check if we got a post
-                if( count( $siblings_parents_sibling ) == 1 ) {
+                if(isset($parent_translations[$locale])){
                     // pre-select in the parent-dropdown
-                    $dropdown_args['selected'] = $siblings_parents_sibling[0]->ID;
+                    $dropdown_args['selected'] = $parent_translations[$locale]->ID;
+                } else {
+                    error_log("handle this case");
                 }
             }
         }
